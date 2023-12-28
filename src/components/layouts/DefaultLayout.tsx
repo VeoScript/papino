@@ -1,4 +1,4 @@
-import React, {ReactNode} from 'react';
+import React, {ReactNode, memo} from 'react';
 import {SafeAreaView, ScrollView} from 'react-native';
 
 import tw from '../../styles/tailwind';
@@ -9,7 +9,7 @@ interface DefaultLayoutProps {
   children: ReactNode;
 }
 
-function DefaultLayout({children}: DefaultLayoutProps) {
+function DefaultLayout({children}: DefaultLayoutProps): JSX.Element {
   return (
     <SafeAreaView style={tw`flex-1 bg-accent-5`}>
       <Header />
@@ -23,4 +23,4 @@ function DefaultLayout({children}: DefaultLayoutProps) {
   );
 }
 
-export default DefaultLayout;
+export default memo(DefaultLayout);
