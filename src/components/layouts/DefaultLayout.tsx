@@ -1,5 +1,5 @@
 import React, {ReactNode} from 'react';
-import {ScrollView} from 'react-native';
+import {SafeAreaView, ScrollView} from 'react-native';
 
 import tw from '../../styles/tailwind';
 
@@ -11,10 +11,15 @@ interface DefaultLayoutProps {
 
 function DefaultLayout({children}: DefaultLayoutProps) {
   return (
-    <ScrollView style={tw`flex-1 bg-accent-5`}>
+    <SafeAreaView style={tw`flex-1 bg-accent-5`}>
       <Header />
-      {children}
-    </ScrollView>
+      <ScrollView
+        keyboardShouldPersistTaps="handled"
+        style={tw`flex-1`}
+        contentContainerStyle={tw`flex-col gap-y-5`}>
+        {children}
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
