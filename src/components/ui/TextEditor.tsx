@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {memo, useMemo, useRef} from 'react';
 import {View, Text} from 'react-native';
 
 import tw from '../../styles/tailwind';
@@ -8,11 +8,18 @@ import FontFamilyStylesheet from '../../styles/globals';
 
 interface TextEditorProps {
   initialText: string;
-  richTextHandle: () => void;
+  richTextHandle: (value: string) => void;
 }
 
-function TextEditor({initialText, richTextHandle}: TextEditorProps) {
+function TextEditor({initialText, richTextHandle}: TextEditorProps): JSX.Element {
   const richText = useRef<any>();
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const changeHTML = () => richText.current?.setContentHTML(initialText ?? '');
+
+  useMemo(() => {
+    changeHTML();
+  }, [changeHTML]);
 
   const fontFamily = 'Poppins';
   const initialCSSText = {
@@ -57,8 +64,8 @@ function TextEditor({initialText, richTextHandle}: TextEditorProps) {
       <RichEditor
         ref={richText}
         initialContentHTML={initialText}
-        onChange={richTextHandle}
-        placeholder="Write your cool idea, article or everthing..."
+        onInput={() => richTextHandle}
+        placeholder="Capture some image with words or paragraph..."
         editorStyle={initialCSSText}
         initialHeight={300}
       />
@@ -66,4 +73,4 @@ function TextEditor({initialText, richTextHandle}: TextEditorProps) {
   );
 }
 
-export default TextEditor;
+export default memo(TextEditor);
