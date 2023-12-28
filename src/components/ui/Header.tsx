@@ -1,9 +1,9 @@
-import React from 'react';
+import React, {memo} from 'react';
 import {View, Text} from 'react-native';
 
 import tw from '../../styles/tailwind';
 
-function Header() {
+function Header(): JSX.Element {
   return (
     <View
       style={tw`flex-row items-center justify-center w-full p-3 border-b border-accent-5 bg-accent-3`}>
@@ -12,4 +12,4 @@ function Header() {
   );
 }
 
-export default Header;
+export default memo(Header);

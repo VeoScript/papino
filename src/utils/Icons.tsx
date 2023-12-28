@@ -11,10 +11,10 @@ export interface IconProps {
   color: string;
 }
 
-export const OcticonIcon = ({size, name, color}: IconProps) => (
+export const OcticonIcon = ({size, name, color}: IconProps): JSX.Element => (
   <Octicon name={name} size={size} color={color} />
 );
 
-export const FeatherIcon = ({size, name, color}: IconProps) => (
+export const FeatherIcon = ({size, name, color}: IconProps): JSX.Element => (
   <FeIcon name={name} size={size} color={color} />
 );
