@@ -22,7 +22,7 @@ function SavePDFModal({
   isVisible,
   setIsVisible,
   onSave,
-}: SavePDFModalProps) {
+}: SavePDFModalProps): JSX.Element {
   const onClose = useCallback(() => {
     setIsVisible(false);
   }, [setIsVisible]);
