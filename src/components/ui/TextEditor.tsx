@@ -1,4 +1,4 @@
-import React, {memo, useMemo, useRef} from 'react';
+import React, {memo, useCallback, useMemo, useRef} from 'react';
 import {View, Text, TouchableOpacity} from 'react-native';
 
 import tw from '../../styles/tailwind';
@@ -7,6 +7,7 @@ import {actions, RichEditor, RichToolbar} from 'react-native-pell-rich-editor';
 import FontFamilyStylesheet from '../../styles/globals';
 
 interface TextEditorProps {
+  isSaving?: boolean;
   initialText: string;
   richTextHandle: (value: string) => void;
   handleClear: () => void;
@@ -14,6 +15,7 @@ interface TextEditorProps {
 }
 
 function TextEditor({
+  isSaving,
   initialText,
   richTextHandle,
   handleClear,
@@ -21,8 +23,10 @@ function TextEditor({
 }: TextEditorProps): JSX.Element {
   const richText = useRef<any>();
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const changeHTML = () => richText.current?.setContentHTML(initialText ?? '');
+  const changeHTML = useCallback(
+    () => richText.current?.setContentHTML(initialText ?? ''),
+    [initialText],
+  );
 
   useMemo(() => {
     changeHTML();
@@ -72,21 +76,33 @@ function TextEditor({
       <RichEditor
         ref={richText}
         initialContentHTML={initialText}
-        onInput={() => richTextHandle}
+        onChange={richTextHandle}
         placeholder="Capture some image with words or paragraph..."
         editorStyle={initialCSSText}
         initialHeight={300}
       />
       <View style={tw`flex-row items-center w-full p-3 gap-x-1 border-t border-accent-2`}>
+        {!isSaving && (
+          <TouchableOpacity
+            disabled={!initialText}
+            style={tw.style(
+              !initialText && 'opacity-50',
+              'flex-1 flex-row items-center justify-center w-full p-3 rounded-xl bg-accent-3',
+            )}
+            onPress={handleClear}>
+            <Text style={tw`font-poppins text-xs text-neutral-700`}>Clear</Text>
+          </TouchableOpacity>
+        )}
         <TouchableOpacity
-          style={tw`flex-1 flex-row items-center justify-center w-full p-3 rounded-xl bg-accent-3`}
-          onPress={handleClear}>
-          <Text style={tw`font-poppins text-xs text-neutral-700`}>Clear</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={tw`flex-1 flex-row items-center justify-center w-full p-3 rounded-xl bg-accent-1`}
+          disabled={!initialText || isSaving}
+          style={tw.style(
+            (!initialText || isSaving) && 'opacity-50',
+            'flex-1 flex-row items-center justify-center w-full p-3 rounded-xl bg-accent-1',
+          )}
           onPress={handleSave}>
-          <Text style={tw`font-poppins text-xs text-neutral-700`}>Save</Text>
+          <Text style={tw`font-poppins text-xs text-neutral-700`}>
+            {isSaving ? 'Saving...' : 'Save'}
+          </Text>
         </TouchableOpacity>
       </View>
     </View>
