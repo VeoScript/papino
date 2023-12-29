@@ -27,6 +27,7 @@ function HomeScreen(): JSX.Element {
 
   useEffect(() => {
     setFinalTextValue(recognizedTexts?.text);
+    return () => {};
   }, [recognizedTexts?.text]);
 
   const handleResetAll = useCallback(() => {
