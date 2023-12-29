@@ -4,6 +4,7 @@ import {SafeAreaView, ScrollView} from 'react-native';
 import tw from '../../styles/tailwind';
 
 import Header from '../ui/Header';
+import Footer from '../ui/Footer';
 
 interface DefaultLayoutProps {
   children: ReactNode;
@@ -16,8 +17,9 @@ function DefaultLayout({children}: DefaultLayoutProps): JSX.Element {
       <ScrollView
         keyboardShouldPersistTaps="handled"
         style={tw`flex-1`}
-        contentContainerStyle={tw`flex-col gap-y-5`}>
+        contentContainerStyle={tw`flex-col`}>
         {children}
+        <Footer />
       </ScrollView>
     </SafeAreaView>
   );

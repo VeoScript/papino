@@ -16,13 +16,18 @@ function HomeScreen(): JSX.Element {
   const [capturedImage, setCapturedImage] = useState<string>('');
   const [recognizedTexts, setRecognizedTexts] = useState<any>(null);
 
-  const richTextHandle = (descriptionText: string): void => {
+  const handleResetAll = useCallback(() => {
+    setCapturedImage('');
+    setRecognizedTexts(null);
+  }, []);
+
+  const richTextHandle = useCallback((descriptionText: string): void => {
     if (descriptionText) {
       setRecognizedTexts(descriptionText);
     } else {
       setRecognizedTexts('');
     }
-  };
+  }, []);
 
   const handleCapturePhoto = useCallback((): void => {
     let options: any = {
@@ -36,6 +41,7 @@ function HomeScreen(): JSX.Element {
       setIsGenerating(true);
 
       if (response.didCancel) {
+        setIsGenerating(false);
         return;
       }
       if (response) {
@@ -48,7 +54,7 @@ function HomeScreen(): JSX.Element {
     });
   }, []);
 
-  const handleChoosePostPhoto = useCallback((): void => {
+  const handleChoosePhoto = useCallback((): void => {
     let options: any = {
       selectionLimit: 1,
       mediaType: 'photo',
@@ -59,6 +65,7 @@ function HomeScreen(): JSX.Element {
       setIsGenerating(true);
 
       if (response.didCancel) {
+        setIsGenerating(false);
         return;
       }
       if (response) {
@@ -71,29 +78,31 @@ function HomeScreen(): JSX.Element {
     });
   }, []);
 
+  const handleSave = useCallback(() => {}, []);
+
   return (
     <>
       {isGenerating ? (
         <Loading />
       ) : (
         <DefaultLayout>
-          <View style={tw`flex-col items-center w-full mt-5 px-5 gap-y-3`}>
+          <View style={tw`flex-col items-center w-full my-5 px-5 gap-y-3`}>
             {capturedImage ? (
               <>
                 {recognizedTexts?.text === '' && (
-                  <Text style={tw`font-poppins text-xs text-red-500`}>
-                    There's no words/paragraph detected in this image.
+                  <Text style={tw`px-3 font-poppins text-xs text-center text-red-600`}>
+                    There's no words/paragraph detected in this image! Try again.
                   </Text>
                 )}
                 <ImageBackground
-                  style={tw`relative w-full overflow-hidden rounded-xl`}
+                  style={tw`relative w-full overflow-hidden rounded-xl shadow-md shadow-red-600`}
                   resizeMode="cover"
                   source={{
                     uri: capturedImage,
                   }}>
                   <View style={tw`absolute w-full h-full bg-black opacity-90`} />
                   <Image
-                    style={tw`w-full h-[30rem]`}
+                    style={tw`w-full h-[26.7rem]`}
                     resizeMode="contain"
                     source={{
                       uri: capturedImage,
@@ -101,10 +110,7 @@ function HomeScreen(): JSX.Element {
                   />
                   <TouchableOpacity
                     style={tw`absolute top-3 right-3 p-2 rounded-full bg-white bg-opacity-70`}
-                    onPress={() => {
-                      setCapturedImage('');
-                      setRecognizedTexts(null);
-                    }}>
+                    onPress={handleResetAll}>
                     <FeatherIcon name="x" size={20} color="#222" />
                   </TouchableOpacity>
                 </ImageBackground>
@@ -115,22 +121,26 @@ function HomeScreen(): JSX.Element {
                   Capture a photo with a words or paragraph
                 </Text>
                 <TouchableOpacity
-                  style={tw`flex-col items-center justify-center w-full h-[20rem] rounded-3xl border border-accent-2 bg-accent-3`}
+                  style={tw`flex-col items-center justify-center w-full h-[20rem] rounded-3xl shadow-md shadow-red-600 border border-accent-2 bg-accent-3`}
                   onPress={handleCapturePhoto}>
                   <FeatherIcon name="camera" size={100} color="#FFB0B0" />
                 </TouchableOpacity>
                 <Text style={tw`font-poppins text-xs text-neutral-600`}>or</Text>
                 <TouchableOpacity
-                  style={tw`flex-row items-center justify-center w-full p-3 gap-x-2 rounded-xl border border-accent-1 bg-accent-3`}
-                  onPress={handleChoosePostPhoto}>
+                  style={tw`flex-row items-center justify-center w-full p-3 gap-x-2 rounded-xl shadow-md shadow-red-600 border border-accent-1 bg-accent-3`}
+                  onPress={handleChoosePhoto}>
                   <FeatherIcon name="image" size={14} color="#555" />
-                  <Text style={tw`font-poppins text-xs text-neutral-600`}>Browser Gallery</Text>
+                  <Text style={tw`font-poppins text-xs text-neutral-600`}>Browse Gallery</Text>
                 </TouchableOpacity>
               </>
             )}
           </View>
-          {/* <Text>{recognizedTexts?.text}</Text> */}
-          <TextEditor initialText={recognizedTexts?.text} richTextHandle={richTextHandle} />
+          <TextEditor
+            initialText={recognizedTexts?.text}
+            richTextHandle={richTextHandle}
+            handleClear={handleResetAll}
+            handleSave={handleSave}
+          />
         </DefaultLayout>
       )}
     </>
