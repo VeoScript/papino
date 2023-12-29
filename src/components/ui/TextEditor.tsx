@@ -7,7 +7,6 @@ import {actions, RichEditor, RichToolbar} from 'react-native-pell-rich-editor';
 import FontFamilyStylesheet from '../../styles/globals';
 
 interface TextEditorProps {
-  isSaving?: boolean;
   initialText: string;
   richTextHandle: (value: string) => void;
   handleClear: () => void;
@@ -15,7 +14,6 @@ interface TextEditorProps {
 }
 
 function TextEditor({
-  isSaving,
   initialText,
   richTextHandle,
   handleClear,
@@ -82,27 +80,23 @@ function TextEditor({
         initialHeight={300}
       />
       <View style={tw`flex-row items-center w-full p-3 gap-x-1 border-t border-accent-2`}>
-        {!isSaving && (
-          <TouchableOpacity
-            disabled={!initialText}
-            style={tw.style(
-              !initialText && 'opacity-50',
-              'flex-1 flex-row items-center justify-center w-full p-3 rounded-xl bg-accent-3',
-            )}
-            onPress={handleClear}>
-            <Text style={tw`font-poppins text-xs text-neutral-700`}>Clear</Text>
-          </TouchableOpacity>
-        )}
         <TouchableOpacity
-          disabled={!initialText || isSaving}
+          disabled={!initialText}
           style={tw.style(
-            (!initialText || isSaving) && 'opacity-50',
+            !initialText && 'opacity-50',
+            'flex-1 flex-row items-center justify-center w-full p-3 rounded-xl bg-accent-3',
+          )}
+          onPress={handleClear}>
+          <Text style={tw`font-poppins text-xs text-neutral-700`}>Clear</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          disabled={!initialText}
+          style={tw.style(
+            !initialText && 'opacity-50',
             'flex-1 flex-row items-center justify-center w-full p-3 rounded-xl bg-accent-1',
           )}
           onPress={handleSave}>
-          <Text style={tw`font-poppins text-xs text-neutral-700`}>
-            {isSaving ? 'Saving...' : 'Save'}
-          </Text>
+          <Text style={tw`font-poppins text-xs text-neutral-700`}>Save</Text>
         </TouchableOpacity>
       </View>
     </View>
