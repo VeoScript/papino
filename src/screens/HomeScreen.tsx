@@ -1,9 +1,10 @@
-import React, {useCallback, useState} from 'react';
-import {View, Text, TouchableOpacity, Image, ImageBackground} from 'react-native';
+import React, {useCallback, useEffect, useState} from 'react';
+import {View, Text, TouchableOpacity, Image, ImageBackground, Alert} from 'react-native';
 
 import tw from '../styles/tailwind';
 import {FeatherIcon} from '../utils/Icons';
 
+import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import TextRecognition from '@react-native-ml-kit/text-recognition';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 
@@ -12,9 +13,15 @@ import Loading from '../components/ui/Loading';
 import TextEditor from '../components/ui/TextEditor';
 
 function HomeScreen(): JSX.Element {
+  const [isSavingPDF, setIsSavingPDF] = useState<boolean>(false);
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
   const [capturedImage, setCapturedImage] = useState<string>('');
   const [recognizedTexts, setRecognizedTexts] = useState<any>(null);
+  const [finalTextValue, setFinalTextValue] = useState<string>('');
+
+  useEffect(() => {
+    setFinalTextValue(recognizedTexts?.text);
+  }, [recognizedTexts?.text]);
 
   const handleResetAll = useCallback(() => {
     setCapturedImage('');
@@ -23,9 +30,9 @@ function HomeScreen(): JSX.Element {
 
   const richTextHandle = useCallback((descriptionText: string): void => {
     if (descriptionText) {
-      setRecognizedTexts(descriptionText);
+      setFinalTextValue(descriptionText);
     } else {
-      setRecognizedTexts('');
+      setFinalTextValue('');
     }
   }, []);
 
@@ -78,7 +85,22 @@ function HomeScreen(): JSX.Element {
     });
   }, []);
 
-  const handleSave = useCallback(() => {}, []);
+  const handleSave = useCallback(async (): Promise<void> => {
+    setIsSavingPDF(true);
+    try {
+      const options = {
+        html: finalTextValue,
+        fileName: 'papilo_file',
+        directory: 'PapiloFiles',
+      };
+      const file = await RNHTMLtoPDF.convert(options);
+      Alert.alert('Success', `PDF saved to ${file.filePath}`);
+      setIsSavingPDF(false);
+    } catch (error: any) {
+      setIsSavingPDF(false);
+      Alert.alert('Error', error.message);
+    }
+  }, [finalTextValue]);
 
   return (
     <>
@@ -89,9 +111,13 @@ function HomeScreen(): JSX.Element {
           <View style={tw`flex-col items-center w-full my-5 px-5 gap-y-3`}>
             {capturedImage ? (
               <>
-                {recognizedTexts?.text === '' && (
+                {recognizedTexts?.text === '' ? (
                   <Text style={tw`px-3 font-poppins text-xs text-center text-red-600`}>
                     There's no words/paragraph detected in this image! Try again.
+                  </Text>
+                ) : (
+                  <Text style={tw`px-3 font-poppins text-xs text-center text-green-600`}>
+                    Generated Successfully
                   </Text>
                 )}
                 <ImageBackground
@@ -136,6 +162,7 @@ function HomeScreen(): JSX.Element {
             )}
           </View>
           <TextEditor
+            isSaving={isSavingPDF}
             initialText={recognizedTexts?.text}
             richTextHandle={richTextHandle}
             handleClear={handleResetAll}
