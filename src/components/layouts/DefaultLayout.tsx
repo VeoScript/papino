@@ -15,6 +15,7 @@ function DefaultLayout({children}: DefaultLayoutProps): JSX.Element {
     <SafeAreaView style={tw`flex-1 bg-accent-5`}>
       <Header />
       <ScrollView
+        // stickyHeaderIndices={[1]}
         keyboardShouldPersistTaps="handled"
         style={tw`flex-1`}
         contentContainerStyle={tw`flex-col`}>

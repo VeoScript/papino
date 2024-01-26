@@ -13,6 +13,43 @@ interface TextEditorProps {
   handleSave: () => void;
 }
 
+function TextEditorButtons({richText}: any) {
+  const handleHead1 = () => <Text style={tw`text-black text-base`}>H1</Text>;
+  const handleHead2 = () => <Text style={tw`text-black text-base`}>H2</Text>;
+  const handleHead3 = () => <Text style={tw`text-black text-base`}>H3</Text>;
+  return (
+    <RichToolbar
+      style={tw`flex-col items-center w-full bg-accent-4 border-t border-b border-accent-1`}
+      editor={richText}
+      selectedIconTint="#FFB0B0"
+      iconTint="#000"
+      iconSize={15}
+      iconMap={{
+        [actions.heading1]: handleHead1,
+        [actions.heading2]: handleHead2,
+        [actions.heading3]: handleHead3,
+      }}
+      actions={[
+        actions.heading1,
+        actions.heading2,
+        actions.heading3,
+        actions.setBold,
+        actions.setItalic,
+        actions.insertBulletsList,
+        actions.insertOrderedList,
+        actions.insertLink,
+        actions.setStrikethrough,
+        actions.setUnderline,
+        actions.alignLeft,
+        actions.alignCenter,
+        actions.alignRight,
+        actions.undo,
+        actions.redo,
+      ]}
+    />
+  );
+}
+
 function TextEditor({
   initialText,
   richTextHandle,
@@ -36,49 +73,25 @@ function TextEditor({
     contentCSSText: `font-family: ${fontFamily}`,
   };
 
-  const handleHead1 = () => <Text style={tw`text-black text-base`}>H1</Text>;
-  const handleHead2 = () => <Text style={tw`text-black text-base`}>H2</Text>;
-  const handleHead3 = () => <Text style={tw`text-black text-base`}>H3</Text>;
-
   return (
     <View style={tw`flex-col w-full`}>
-      <RichToolbar
-        style={tw`flex-col items-center w-full bg-accent-4 border-t border-b border-accent-1`}
-        editor={richText}
-        selectedIconTint="#FFB0B0"
-        iconTint="#000"
-        iconSize={15}
-        iconMap={{
-          [actions.heading1]: handleHead1,
-          [actions.heading2]: handleHead2,
-          [actions.heading3]: handleHead3,
-        }}
-        actions={[
-          actions.heading1,
-          actions.heading2,
-          actions.heading3,
-          actions.setBold,
-          actions.setItalic,
-          actions.insertBulletsList,
-          actions.insertOrderedList,
-          actions.insertLink,
-          actions.setStrikethrough,
-          actions.setUnderline,
-          actions.alignLeft,
-          actions.alignCenter,
-          actions.alignRight,
-          actions.undo,
-          actions.redo,
-        ]}
-      />
-      <RichEditor
-        ref={richText}
-        initialContentHTML={initialText}
-        onChange={richTextHandle}
-        placeholder="Capture some image with words or paragraph..."
-        editorStyle={initialCSSText}
-        initialHeight={300}
-      />
+      <TextEditorButtons richText={richText} />
+      <View style={tw`bg-white`}>
+        {initialText && (
+          <Text style={tw`p-5 font-poppins text-center text-sm text-accent-1`}>
+            "Start editing your paragraph"
+          </Text>
+        )}
+        <RichEditor
+          ref={richText}
+          initialContentHTML={initialText}
+          onChange={richTextHandle}
+          placeholder="Capture some image with words or paragraph..."
+          editorStyle={initialCSSText}
+          initialHeight={310}
+        />
+      </View>
+      <TextEditorButtons richText={richText} />
       <View style={tw`flex-row items-center w-full p-3 gap-x-1 border-t border-accent-2`}>
         <TouchableOpacity
           disabled={!initialText}
