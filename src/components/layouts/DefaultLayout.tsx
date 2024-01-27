@@ -5,12 +5,15 @@ import tw from '../../styles/tailwind';
 
 import Header from '../ui/Header';
 import Footer from '../ui/Footer';
+import {useCheckKeyboard} from '../../hooks/useCheckKeyboard';
 
 interface DefaultLayoutProps {
   children: ReactNode;
 }
 
 function DefaultLayout({children}: DefaultLayoutProps): JSX.Element {
+  const isKeyboardDisplay = useCheckKeyboard();
+
   return (
     <SafeAreaView style={tw`flex-1 bg-accent-5`}>
       <Header />
@@ -20,7 +23,7 @@ function DefaultLayout({children}: DefaultLayoutProps): JSX.Element {
         style={tw`flex-1`}
         contentContainerStyle={tw`flex-col`}>
         {children}
-        <Footer />
+        {!isKeyboardDisplay && <Footer />}
       </ScrollView>
     </SafeAreaView>
   );
